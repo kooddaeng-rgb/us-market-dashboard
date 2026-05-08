@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>미국 시장 마감 브리핑</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif; background: #f4f4f0; color: #1a1a1a; font-size: 14px; }
+
+/* 헤더 */
+.top-bar { background: #1a1a1a; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+.top-bar h1 { font-size: 15px; font-weight: 500; color: #fff; display: flex; align-items: center; gap: 8px; }
+.top-updated { font-size: 11px; color: #888; }
+
+/* 날짜 탭 */
+.tab-bar { background: #fff; border-bottom: 1px solid #e4e4e0; padding: 0 20px; display: flex; gap: 2px; overflow-x: auto; position: sticky; top: 0; z-index: 20; }
+.tab-btn { padding: 10px 14px; font-size: 12px; border: none; background: none; cursor: pointer; color: #888; border-bottom: 2px solid transparent; white-space: nowrap; line-height: 1.3; }
+.tab-btn span { display: block; font-size: 10px; color: #bbb; }
+.tab-btn.active { color: #1a1a1a; border-bottom-color: #1a1a1a; font-weight: 500; }
+
+/* 패널 */
+.day-panel { display: none; max-width: 900px; margin: 0 auto; padding: 16px 16px 40px; }
+.day-panel.visible { display: block; }
+
+/* 타이틀 카드 */
+.title-card {
+  background: #fff; border-radius: 10px; border: 1px solid #e4e4e0;
+  padding: 14px 18px; margin-bottom: 12px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.title-card .left h2 { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+.title-card .left .meta { font-size: 11px; color: #888; }
+.status-pill { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 12px; text-align: right; }
+.status-sub { font-size: 10px; margin-top: 2px; text-align: right; color: #888; }
+
+/* 지수 그리드 */
+.idx-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 12px; }
+@media (max-width: 600px) { .idx-grid { grid-template-columns: repeat(3, 1fr); } }
+.idx-card { background: #fff; border: 1px solid #e4e4e0; border-radius: 8px; padding: 10px 12px; }
+.idx-name { font-size: 10px; color: #999; margin-bottom: 3px; }
+.idx-val { font-size: 15px; font-weight: 500; }
+.idx-chg { font-size: 12px; font-weight: 500; margin-top: 2px; }
+.up { color: #1a7a3c; } .dn { color: #b02020; }
+
+/* 2컬럼 레이아웃 */
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+@media (max-width: 580px) { .row2 { grid-template-columns: 1fr; } }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+@media (max-width: 680px) { .row3 { grid-template-columns: 1fr; } }
+
+.card { background: #fff; border: 1px solid #e4e4e0; border-radius: 10px; padding: 14px 16px; }
+.card-title { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .07em; color: #aaa; margin-bottom: 10px; }
+
+/* 섹터 */
+.sec-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f2f2ee; font-size: 12px; }
+.sec-row:last-child { border-bottom: none; }
+.sec-name { color: #444; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; }
+.bar-wrap { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.bar { height: 5px; border-radius: 3px; min-width: 2px; }
+.bar-up { background: #1a7a3c; } .bar-dn { background: #b02020; }
+.sec-pct { font-size: 12px; font-weight: 500; min-width: 52px; text-align: right; }
+
+/* 주목 종목 */
+.mover-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f2f2ee; }
+.mover-row:last-child { border-bottom: none; }
+.mover-t { font-size: 12px; font-weight: 500; }
+.mover-n { font-size: 10px; color: #aaa; margin-top: 1px; }
+.mover-vol { font-size: 10px; color: #bbb; margin-top: 1px; }
+.badge { font-size: 12px; font-weight: 500; padding: 2px 9px; border-radius: 10px; flex-shrink: 0; }
+.badge-up { background: #e6f4ec; color: #1a7a3c; }
+.badge-dn { background: #fceaea; color: #b02020; }
+
+/* 환율 */
+.fx-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f2f2ee; font-size: 13px; }
+.fx-row:last-child { border-bottom: none; }
+.fx-name { color: #555; }
+.fx-val { font-weight: 500; }
+.fx-chg { font-size: 11px; font-weight: 500; min-width: 60px; text-align: right; }
+
+/* 뉴스 */
+.news-row { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px solid #f2f2ee; font-size: 12px; line-height: 1.55; }
+.news-row:last-child { border-bottom: none; }
+.news-src { font-size: 10px; color: #bbb; white-space: nowrap; flex-shrink: 0; padding-top: 1px; min-width: 80px; }
+.news-txt { color: #333; }
+
+/* 테마 */
+.theme-section { margin-bottom: 8px; }
+.theme-section-title { font-size: 11px; font-weight: 500; padding: 7px 12px; border-radius: 6px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.ts-bull  { background: #e6f4ec; color: #1a7a3c; }
+.ts-mix   { background: #f5f5f0; color: #888; }
+.ts-bear  { background: #fceaea; color: #b02020; }
+
+.theme-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 4px; border-bottom: 1px solid #f2f2ee; }
+.theme-row:last-child { border-bottom: none; }
+.theme-left { flex: 1; min-width: 0; }
+.theme-icon { font-size: 14px; margin-right: 5px; }
+.theme-name { font-size: 13px; font-weight: 500; }
+.theme-us { font-size: 11px; color: #888; margin-top: 2px; line-height: 1.5; }
+.theme-kr { font-size: 11px; color: #aaa; margin-top: 1px; }
+.theme-arrow { font-size: 10px; color: #bbb; margin: 0 2px; }
+.theme-right { flex-shrink: 0; text-align: right; margin-left: 10px; }
+.theme-pct { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+.sig { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 8px; }
+.sig-hot    { background: #e6f4ec; color: #1a7a3c; }
+.sig-warm   { background: #eef8e8; color: #3a6d10; }
+.sig-neutral{ background: #f2f2ee; color: #888; }
+.sig-cold   { background: #fff8ec; color: #7a4a00; }
+.sig-freeze { background: #fceaea; color: #b02020; }
+
+/* 인사이트 */
+.insight { background: #f0f6ff; border-left: 3px solid #3b82f6; border-radius: 0 8px 8px 0; padding: 12px 15px; font-size: 13px; line-height: 1.75; color: #1a1a1a; margin-bottom: 12px; }
+.insight-label { font-size: 10px; font-weight: 500; color: #3b82f6; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
+
+.divider { height: 1px; background: #f2f2ee; margin: 0 0 12px; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>📊 미국 시장 마감 브리핑</h1>
+  <span class="top-updated" id="updatedAt"></span>
+</div>
+
+<div class="tab-bar" id="tabBar"></div>
+
+<div id="panels"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA — 스케줄러가 이 블록을 매일 교체합니다
+// ═══════════════════════════════════════════════════════
+const UPDATED = "2026-05-08 07:05";
+
+const DAYS = [
+  /* ───────── 4/28 화 ───────── */
+  {
+    id:"d0428", label:"4/28 화", kor:"4/29 수 아침",
+    headline:"소폭 약세", sub:"관망 우위",
+    statusCls:"sig-cold",
+    indices:[
+      {name:"S&P 500",     val:"7,138.80", chg:-0.49},
+      {name:"나스닥",       val:"24,663.80",chg:-0.90},
+      {name:"다우존스",     val:"49,141.90",chg:-0.05},
+      {name:"러셀 2000",   val:"2,720.40", chg:-1.20},
+      {name:"VIX 공포",    val:"22.10",    chg:+4.30}
+    ],
+    sectors:[
+      {name:"소비재(임의) XLY",chg:+0.80},{name:"산업재 XLI",  chg:+0.50},
+      {name:"금융 XLF",        chg:+0.30},{name:"소재 XLB",    chg:+0.10},
+      {name:"통신 XLC",        chg:-0.20},{name:"기술 XLK",    chg:-0.80},
+      {name:"소비재(필수) XLP",chg:-0.60},{name:"헬스케어 XLV",chg:-0.50},
+      {name:"유틸리티 XLU",    chg:-0.90},{name:"부동산 XLRE", chg:-1.30},
+      {name:"에너지 XLE",      chg:-1.10}
+    ],
+    gainers:[
+      {t:"GM",  n:"제너럴모터스",    chg:+4.20, vol:"14M"},
+      {t:"NUE", n:"뉴코",           chg:+3.80, vol:"5M"},
+      {t:"QCOM",n:"퀄컴",           chg:+2.10, vol:"12M"},
+      {t:"JPM", n:"JP모건",         chg:+1.50, vol:"9M"},
+      {t:"MSFT",n:"마이크로소프트", chg:+0.90, vol:"20M"}
+    ],
+    losers:[
+      {t:"AMD", n:"AMD",      chg:-3.50, vol:"45M"},
+      {t:"NVDA",n:"엔비디아", chg:-3.20, vol:"38M"},
+      {t:"TSM", n:"TSMC",     chg:-2.80, vol:"8M"},
+      {t:"MU",  n:"마이크론", chg:-2.10, vol:"22M"},
+      {t:"DDOG",n:"데이터독", chg:-2.60, vol:"7M"}
+    ],
+    fx:[
+      {name:"달러/원",  val:"1,441.20",chg:+0.45},
+      {name:"달러/엔",  val:"155.30",  chg:+0.20},
+      {name:"달러/위안",val:"6.84",    chg:-0.05}
+    ],
+    news:[
+      {src:"WSJ",  txt:"OpenAI 내부 매출·이용자 목표 미달 보도 — 빅테크 전반 압박"},
+      {src:"CNBC", txt:"러셀2000, 최근 급등 후 차익실현 매물 출회 -1.2%"},
+      {src:"CNBC", txt:"GM 1Q 어닝서프라이즈, 2026 가이던스 상향"},
+      {src:"MW",   txt:"뉴코(NUE) +3.8%, 철강 실적 어닝서프라이즈"},
+      {src:"Reuters",txt:"이란-미국 협상 교착, 호르무즈 해협 긴장 지속"}
+    ],
+    themes:[
+      /* 강세 */
+      {icon:"🏦",name:"금융·은행",      us:"GS ▲ / JPM ▲",             kr:"KB금융 / 신한지주 / 하나금융",        pct:+0.80, sig:"warm",  note:"미국 은행주 소폭 강세 → 국내 금융주 밸류 부각"},
+      {icon:"🚗",name:"자동차·모빌리티",us:"GM +4.2% ▲",                 kr:"현대차 / 기아 / 현대모비스",          pct:+0.60, sig:"warm",  note:"GM 어닝서프라이즈, 현대차·기아 간접 모멘텀"},
+      {icon:"🏭",name:"산업재",         us:"XLI +0.50%",                 kr:"HD현대 / 한화에어로스페이스",          pct:+0.50, sig:"warm",  note:"산업재 섹터 소폭 강세 유지"},
+      /* 혼조 */
+      {icon:"🛡️",name:"방산·우주",       us:"LMT ▼ / RTX ▼",             kr:"한화에어로스페이스 / 한국항공우주",    pct:-0.30, sig:"neutral",note:"혼조, 지정학 불확실성 지속"},
+      /* 약세 */
+      {icon:"🤖",name:"AI·데이터센터",   us:"NVDA -3.2% / MSFT ▼",        kr:"SK하이닉스 / 삼성전자 / 네이버",      pct:-1.10, sig:"cold",  note:"OpenAI 실망감 + 빅테크 매도세"},
+      {icon:"☁️",name:"클라우드·SaaS",   us:"DDOG -2.6% / NOW ▼",         kr:"더존비즈온 / 삼성SDS / NHN",         pct:-1.80, sig:"freeze",note:"SaaS 전반 약세"},
+      {icon:"🔐",name:"사이버보안",      us:"CRWD ▼ / PANW ▼",            kr:"안랩 / 이글루코퍼레이션 / 지니언스",  pct:-1.20, sig:"cold",  note:"기술 하락세 동반"},
+      {icon:"🔵",name:"반도체 메모리·HBM",us:"NVDA -3.2% / AMD -3.5% / MU -2.1%",kr:"삼성전자 / SK하이닉스 / 한미반도체",pct:-2.80, sig:"freeze",note:"AI 기대 후퇴로 반도체 전반 급락"},
+      {icon:"🏗️",name:"반도체 파운드리",  us:"TSM -2.8% / QCOM +2.1%",    kr:"삼성전자 / DB하이텍 / 삼성전기",      pct:-0.70, sig:"cold",  note:"TSMC 약세, 퀄컴만 선전"},
+      {icon:"⚙️",name:"반도체 장비·소재", us:"AMAT ▼ / LRCX ▼",           kr:"한미반도체 / 원익IPS / 주성엔지니어링",pct:-1.50, sig:"cold", note:"장비 투자 사이클 불확실"},
+      {icon:"💡",name:"광통신·네트워크", us:"ANET ▼ / CIEN ▼",            kr:"오이솔루션 / 우리로 / 에치에프알",    pct:-1.50, sig:"cold",  note:"기술 약세 동반"},
+      {icon:"🦾",name:"로봇·자동화",     us:"ROK ▼ / TER ▼",              kr:"레인보우로보틱스 / 현대로보틱스",      pct:-0.80, sig:"cold",  note:"혼조"},
+      {icon:"🔋",name:"전기차·배터리",   us:"TSLA ▼ / GM +4.2%",          kr:"LG에너지솔루션 / 삼성SDI / SK이노",   pct:-0.40, sig:"neutral",note:"GM 강세지만 전기차 수요 우려"},
+      {icon:"⛏️",name:"배터리 소재·리튬", us:"ALB ▼",                      kr:"에코프로 / 포스코홀딩스 / 엘앤에프",  pct:-0.50, sig:"neutral",note:"리튬 가격 약세"},
+      {icon:"☀️",name:"신재생에너지",     us:"ENPH ▼ / FSLR ▼",            kr:"한화솔루션 / OCI / 씨에스윈드",       pct:-0.90, sig:"cold",  note:"정책 불확실성 지속"},
+      {icon:"⚡",name:"수소·원자력",      us:"CCJ ▼ / CEG ▼",              kr:"두산에너빌리티 / 한전기술",           pct:-0.60, sig:"cold",  note:"혼조"},
+      {icon:"⛽",name:"에너지·정유",      us:"XOM ▼ / CVX ▼",              kr:"S-Oil / SK이노베이션 / GS",          pct:-1.10, sig:"cold",  note:"유가 약세"},
+      {icon:"💊",name:"바이오·헬스케어",  us:"LLY ▼ / NVO ▼",              kr:"삼성바이오 / 셀트리온 / 한미약품",    pct:-0.50, sig:"neutral",note:"방어주 혼조"},
+      {icon:"🚢",name:"조선·해운",        us:"ZIM ▼ / DAC ▼",              kr:"HD현대중공업 / 삼성중공업 / HMM",     pct:-0.80, sig:"cold",  note:"해운 운임 약세"},
+      {icon:"💄",name:"소비재·K-뷰티",   us:"EL ▼ / ULTA ▼",              kr:"아모레퍼시픽 / LG생활건강 / 코스맥스",pct:-0.70, sig:"cold",  note:"글로벌 소비 심리 위축"},
+      {icon:"🎮",name:"게임·K-콘텐츠",   us:"NFLX ▼ / RBLX ▼",            kr:"크래프톤 / 넷마블 / 하이브",          pct:-0.30, sig:"neutral",note:"혼조"}
+    ],
+    insight:"반도체·AI 소프트웨어 전반 약세. 국내 SK하이닉스·삼성전자 눌림 가능성 있음. GM 어닝서프라이즈는 현대차·기아에 간접 모멘텀 제공 가능하나 제한적. 금융·산업재는 선별 매수 기회."
+  },
+
+  /* ───────── 4/29 수 ───────── */
+  {
+    id:"d0429", label:"4/29 수", kor:"4/30 목 아침",
+    headline:"혼조", sub:"관망 우위",
+    statusCls:"sig-neutral",
+    indices:[
+      {name:"S&P 500",   val:"7,135.95", chg:-0.04},
+      {name:"나스닥",     val:"24,673.24",chg:+0.04},
+      {name:"다우존스",   val:"48,861.81",chg:-0.57},
+      {name:"러셀 2000", val:"2,704.10", chg:-0.59},
+      {name:"VIX 공포",  val:"21.80",    chg:-1.40}
+    ],
+    sectors:[
+      {name:"에너지 XLE",      chg:+1.80},{name:"기술 XLK",    chg:+0.30},
+      {name:"통신 XLC",        chg:+0.20},{name:"소비재(임의) XLY",chg:+0.10},
+      {name:"소재 XLB",        chg:-0.20},{name:"산업재 XLI",  chg:-0.30},
+      {name:"소비재(필수) XLP",chg:-0.40},{name:"헬스케어 XLV",chg:-0.20},
+      {name:"금융 XLF",        chg:-0.50},{name:"유틸리티 XLU",chg:-0.80},
+      {name:"부동산 XLRE",     chg:-0.90}
+    ],
+    gainers:[
+      {t:"XOM", n:"엑슨모빌",       chg:+2.10,vol:"18M"},
+      {t:"CVX", n:"쉐브론",         chg:+1.90,vol:"14M"},
+      {t:"MSFT",n:"마이크로소프트", chg:+1.20,vol:"22M"},
+      {t:"META",n:"메타",           chg:+0.80,vol:"16M"},
+      {t:"GOOGL",n:"알파벳",        chg:+0.60,vol:"12M"}
+    ],
+    losers:[
+      {t:"JPM",n:"JP모건",         chg:-2.40,vol:"11M"},
+      {t:"BAC",n:"뱅크오브아메리카",chg:-1.90,vol:"38M"},
+      {t:"GS", n:"골드만삭스",      chg:-1.50,vol:"5M"},
+      {t:"MS", n:"모건스탠리",      chg:-1.20,vol:"8M"},
+      {t:"XLU",n:"유틸리티ETF",     chg:-0.80,vol:"6M"}
+    ],
+    fx:[
+      {name:"달러/원",  val:"1,438.50",chg:-0.19},
+      {name:"달러/엔",  val:"154.90",  chg:-0.26},
+      {name:"달러/위안",val:"6.83",    chg:-0.15}
+    ],
+    news:[
+      {src:"CNBC",  txt:"Fed 기준금리 동결 유지, 인플레이션 경계 발언"},
+      {src:"CNBC",  txt:"이란 봉쇄 지속, WTI $108 돌파"},
+      {src:"CNBC",  txt:"MS·META 1Q 실적 호조, CAPEX 가이던스 상향으로 주가 혼조"},
+      {src:"Reuters",txt:"美-이란 협상 채널 파키스탄 중재로 유지 중"},
+      {src:"MW",    txt:"애플·아마존 실적 발표 내일 예정"}
+    ],
+    themes:[
+      {icon:"⛽",name:"에너지·정유",     us:"XOM +2.1% / CVX +1.9%",     kr:"S-Oil / SK이노베이션 / GS",          pct:+1.80,sig:"hot",   note:"WTI $108 돌파, 이란 봉쇄 지속 → 정제마진 기대"},
+      {icon:"🤖",name:"AI·데이터센터",   us:"MSFT +1.2% / META +0.8%",   kr:"SK하이닉스 / 삼성전자 / 네이버",      pct:+0.80,sig:"warm",  note:"빅테크 실적 기대감 유지"},
+      {icon:"☁️",name:"클라우드·SaaS",   us:"CRM ▲ / NOW ▲",             kr:"더존비즈온 / 삼성SDS / NHN",         pct:+0.50,sig:"warm",  note:"CAPEX 상향으로 SaaS 수혜 기대"},
+      {icon:"🏦",name:"금융·은행",       us:"JPM -2.4% / BAC -1.9%",     kr:"KB금융 / 신한지주 / 하나금융",        pct:-1.20,sig:"cold",  note:"미국 은행주 급락 → 국내 금융주 주의"},
+      {icon:"⚡",name:"수소·원자력",      us:"CCJ ▼ / CEG ▼",             kr:"두산에너빌리티 / 한전기술",           pct:-0.80,sig:"cold",  note:"에너지 전환 불확실성"},
+      {icon:"🔵",name:"반도체 메모리",   us:"NVDA ▼ / MU ▼",             kr:"삼성전자 / SK하이닉스 / 한미반도체",  pct:-0.60,sig:"cold",  note:"혼조세 지속"},
+      {icon:"🚗",name:"자동차·모빌리티", us:"TSLA ▼ / GM ▼",             kr:"현대차 / 기아 / 현대모비스",          pct:-0.20,sig:"neutral",note:"중립"},
+      {icon:"🎮",name:"게임·K-콘텐츠",  us:"NFLX ▼ / DIS ▼",            kr:"크래프톤 / 넷마블 / 하이브",          pct:-0.30,sig:"neutral",note:"혼조"},
+      {icon:"💊",name:"바이오·헬스케어", us:"LLY ▼ / JNJ ▼",             kr:"삼성바이오 / 셀트리온 / 한미약품",    pct:-0.30,sig:"neutral",note:"방어주 중립"},
+      {icon:"🏗️",name:"반도체 파운드리", us:"TSM ▼ / QCOM ▼",            kr:"삼성전자 / DB하이텍",                 pct:-0.50,sig:"neutral",note:"혼조"},
+      {icon:"⚙️",name:"반도체 장비",     us:"AMAT ▼ / LRCX ▼",           kr:"한미반도체 / 원익IPS",                pct:-0.80,sig:"cold",  note:"약세"},
+      {icon:"💡",name:"광통신·네트워크", us:"ANET ▼ / CIEN ▼",           kr:"오이솔루션 / 우리로",                 pct:-0.60,sig:"cold",  note:"약세"},
+      {icon:"🔋",name:"전기차·배터리",   us:"TSLA ▼",                    kr:"LG에너지솔루션 / 삼성SDI",            pct:-0.40,sig:"neutral",note:"혼조"},
+      {icon:"⛏️",name:"배터리 소재",     us:"ALB ▼",                     kr:"에코프로 / 포스코홀딩스",              pct:-0.30,sig:"neutral",note:"중립"},
+      {icon:"☀️",name:"신재생에너지",    us:"ENPH ▼ / NEE ▼",            kr:"한화솔루션 / OCI",                    pct:-0.60,sig:"cold",  note:"유가 급등이 재생에너지 경쟁력 약화"},
+      {icon:"🛡️",name:"방산·우주",       us:"LMT ▼ / RTX ▼",             kr:"한화에어로스페이스 / 현대로템",        pct:-0.30,sig:"neutral",note:"혼조"},
+      {icon:"🚢",name:"조선·해운",       us:"ZIM ▼ / DAC ▼",             kr:"HD현대중공업 / HMM",                  pct:-0.50,sig:"neutral",note:"중립"},
+      {icon:"🏗️",name:"철강·금속",       us:"NUE ▼ / FCX ▼",             kr:"포스코홀딩스 / 현대제철",              pct:-0.20,sig:"neutral",note:"중립"},
+      {icon:"🦾",name:"로봇·자동화",     us:"ROK ▼ / TER ▼",             kr:"레인보우로보틱스 / 현대로보틱스",      pct:-0.50,sig:"neutral",note:"혼조"},
+      {icon:"💄",name:"소비재·K-뷰티",  us:"EL ▼ / ULTA ▼",             kr:"아모레퍼시픽 / LG생활건강",            pct:-0.40,sig:"neutral",note:"중립"}
+    ],
+    insight:"유가 급등으로 에너지주 단기 모멘텀. 국내 S-Oil·SK이노베이션 정제마진 기대. 빅테크 실적 대기로 기술주는 관망세 유지. 금융주 단기 약세 주의."
+  },
+
+  /* ───────── 4/30 목 ───────── */
+  {
+    id:"d0430", label:"4/30 목", kor:"5/1 금 아침",
+    headline:"강세 — 전 섹터 동반 상승", sub:"리스크온",
+    statusCls:"sig-hot",
+    indices:[
+      {name:"S&P 500",   val:"7,209.01", chg:+1.02},
+      {name:"나스닥",     val:"24,892.31",chg:+0.89},
+      {name:"다우존스",   val:"49,652.14",chg:+1.62},
+      {name:"러셀 2000", val:"2,742.80", chg:+1.43},
+      {name:"VIX 공포",  val:"19.40",    chg:-11.00}
+    ],
+    sectors:[
+      {name:"산업재 XLI",      chg:+2.80},{name:"헬스케어 XLV",     chg:+2.10},
+      {name:"유틸리티 XLU",    chg:+1.90},{name:"소비재(임의) XLY", chg:+1.50},
+      {name:"금융 XLF",        chg:+1.20},{name:"소재 XLB",         chg:+1.10},
+      {name:"기술 XLK",        chg:+0.90},{name:"통신 XLC",         chg:+0.70},
+      {name:"소비재(필수) XLP",chg:+0.60},{name:"부동산 XLRE",      chg:+0.50},
+      {name:"에너지 XLE",      chg:+0.30}
+    ],
+    gainers:[
+      {t:"CAT", n:"캐터필러",   chg:+10.00,vol:"8M"},
+      {t:"LLY", n:"일라이릴리", chg:+9.00, vol:"7M"},
+      {t:"GOOGL",n:"알파벳",   chg:+4.80, vol:"15M"},
+      {t:"AAPL",n:"애플",       chg:+3.20, vol:"52M"},
+      {t:"AMZN",n:"아마존",     chg:+2.10, vol:"28M"}
+    ],
+    losers:[
+      {t:"MSFT",n:"마이크로소프트",chg:-2.10,vol:"24M"},
+      {t:"META",n:"메타",         chg:-1.80,vol:"18M"},
+      {t:"COP", n:"코노코필립스", chg:-1.20,vol:"10M"},
+      {t:"CVX", n:"쉐브론",       chg:-0.80,vol:"12M"},
+      {t:"XOM", n:"엑슨모빌",     chg:-0.50,vol:"16M"}
+    ],
+    fx:[
+      {name:"달러/원",  val:"1,432.10",chg:-0.44},
+      {name:"달러/엔",  val:"154.20",  chg:-0.45},
+      {name:"달러/위안",val:"6.81",    chg:-0.29}
+    ],
+    news:[
+      {src:"CNBC",  txt:"알파벳 1Q 실적 대형 어닝서프라이즈, 구글 클라우드 견조"},
+      {src:"CNBC",  txt:"일라이릴리 GLP-1 실적 기대 이상, 헬스케어 섹터 급등"},
+      {src:"CNBC",  txt:"캐터필러 실적 호조 → 산업재 전반 동반 상승"},
+      {src:"MW",    txt:"S&P500 4월 월간 +10.4%, 2020년 이후 최고 월간 수익률"},
+      {src:"Reuters",txt:"유가 소폭 하락, 이란 협상 진전 기대"}
+    ],
+    themes:[
+      {icon:"💊",name:"바이오·헬스케어", us:"LLY +9.0% / NVO ▲",          kr:"삼성바이오 / 셀트리온 / 한미약품",     pct:+2.50,sig:"hot",  note:"LLY GLP-1 실적 폭발 → 한미약품 GLP-1 파이프라인 재조명"},
+      {icon:"🏭",name:"산업재·방산",     us:"CAT +10.0% / XLI +2.8%",     kr:"한화에어로스페이스 / 현대로템",        pct:+2.10,sig:"hot",  note:"캐터필러 서프라이즈 → 국내 산업재 동반 모멘텀"},
+      {icon:"🤖",name:"AI·데이터센터",   us:"GOOGL +4.8% / AMZN +2.1%",   kr:"SK하이닉스 / 삼성전자 / 네이버",      pct:+1.40,sig:"warm", note:"구글 클라우드 견조, AI 인프라 투자 지속"},
+      {icon:"☁️",name:"클라우드·SaaS",   us:"CRM ▲ / NOW ▲",              kr:"더존비즈온 / 삼성SDS / NHN",         pct:+1.10,sig:"warm", note:"빅테크 클라우드 성장 확인"},
+      {icon:"🏦",name:"금융·은행",       us:"XLF +1.2%",                  kr:"KB금융 / 신한지주 / 하나금융",        pct:+1.20,sig:"warm", note:"금리 안정 + 실적 호조"},
+      {icon:"🎮",name:"게임·K-콘텐츠",   us:"NFLX ▲ / DIS ▲",             kr:"크래프톤 / 넷마블 / 하이브",          pct:+0.60,sig:"warm", note:"콘텐츠 소비 강세"},
+      {icon:"🚗",name:"자동차·모빌리티", us:"TSLA ▲ / GM ▲",              kr:"현대차 / 기아 / 현대모비스",          pct:+0.50,sig:"warm", note:"소비재 섹터 강세 연동"},
+      {icon:"🔵",name:"반도체 메모리",   us:"NVDA ▲ / MU ▲",              kr:"삼성전자 / SK하이닉스 / 한미반도체",  pct:+0.80,sig:"warm", note:"전반적 반등"},
+      {icon:"🏗️",name:"반도체 파운드리", us:"TSM ▲ / QCOM ▲",             kr:"삼성전자 / DB하이텍",                 pct:+0.70,sig:"warm", note:"강세 동참"},
+      {icon:"⚙️",name:"반도체 장비",     us:"AMAT ▲ / LRCX ▲",           kr:"한미반도체 / 원익IPS",                pct:+0.60,sig:"warm", note:"장비 사이클 회복 기대"},
+      {icon:"💡",name:"광통신·네트워크", us:"ANET ▲ / CSCO ▲",            kr:"오이솔루션 / 우리로 / 에치에프알",    pct:+0.50,sig:"warm", note:"네트워크 투자 강세"},
+      {icon:"🔋",name:"전기차·배터리",   us:"TSLA ▲",                     kr:"LG에너지솔루션 / 삼성SDI",            pct:+0.80,sig:"warm", note:"소비재 강세 연동"},
+      {icon:"⛏️",name:"배터리 소재",     us:"ALB ▲ / LTHM ▲",             kr:"에코프로 / 포스코홀딩스",              pct:+0.60,sig:"warm", note:"리튬 반등"},
+      {icon:"☀️",name:"신재생에너지",    us:"NEE ▲ / ENPH ▲",             kr:"한화솔루션 / OCI",                    pct:+0.90,sig:"warm", note:"유틸리티 동반 강세"},
+      {icon:"⚡",name:"수소·원자력",     us:"CEG ▲ / CCJ ▲",              kr:"두산에너빌리티 / 한전기술",           pct:+0.70,sig:"warm", note:"유틸리티 섹터 강세"},
+      {icon:"⛽",name:"에너지·정유",     us:"XLE +0.3%",                  kr:"S-Oil / SK이노베이션 / GS",          pct:+0.30,sig:"warm", note:"유가 하락에도 소폭 강세"},
+      {icon:"🚢",name:"조선·해운",       us:"DAC ▲ / ZIM ▲",              kr:"HD현대중공업 / 삼성중공업 / HMM",     pct:+0.60,sig:"warm", note:"전반 강세 동참"},
+      {icon:"🏗️",name:"철강·금속",       us:"NUE ▲ / STLD ▲",             kr:"포스코홀딩스 / 현대제철",              pct:+1.10,sig:"warm", note:"산업재 강세 연동"},
+      {icon:"🦾",name:"로봇·자동화",     us:"ROK ▲ / TER ▲",              kr:"레인보우로보틱스 / 현대로보틱스",      pct:+0.80,sig:"warm", note:"산업재 동반 강세"},
+      {icon:"💄",name:"소비재·K-뷰티",  us:"EL ▲ / ULTA ▲",              kr:"아모레퍼시픽 / LG생활건강 / 코스맥스",pct:+0.70,sig:"warm", note:"소비재 섹터 강세 연동"}
+    ],
+    insight:"전 섹터 동반 상승, 리스크온 본격화. 바이오·헬스케어 강세 → 삼성바이오·셀트리온·한미약품 직접 수혜 기대. 한화에어로스페이스·현대로템 방산주 모멘텀 지속. 원화 강세로 수출주 일부 차익실현 주의."
+  },
+
+  /* ───────── 5/1 금 ───────── */
+  {
+    id:"d0501", label:"5/1 금", kor:"5/4 월 아침",
+    headline:"소폭 강세 — 나스닥 25,000 돌파", sub:"리스크온",
+    statusCls:"sig-warm",
+    indices:[
+      {name:"S&P 500",   val:"7,230.12", chg:+0.29},
+      {name:"나스닥",     val:"25,114.44",chg:+0.89},
+      {name:"다우존스",   val:"49,499.27",chg:-0.31},
+      {name:"러셀 2000", val:"2,761.30", chg:+0.69},
+      {name:"VIX 공포",  val:"18.60",    chg:-4.12}
+    ],
+    sectors:[
+      {name:"기술 XLK",        chg:+1.80},{name:"통신 XLC",    chg:+1.10},
+      {name:"소비재(임의) XLY",chg:+0.90},{name:"소재 XLB",   chg:+0.40},
+      {name:"헬스케어 XLV",    chg:+0.20},{name:"금융 XLF",   chg:-0.10},
+      {name:"산업재 XLI",      chg:-0.30},{name:"소비재(필수) XLP",chg:-0.20},
+      {name:"부동산 XLRE",     chg:-0.40},{name:"유틸리티 XLU",chg:-0.70},
+      {name:"에너지 XLE",      chg:-1.90}
+    ],
+    gainers:[
+      {t:"AAPL",n:"애플",          chg:+3.10,vol:"55M"},
+      {t:"DDOG",n:"데이터독",      chg:+2.80,vol:"8M"},
+      {t:"CRWD",n:"크라우드스트라이크",chg:+2.50,vol:"6M"},
+      {t:"NOW", n:"서비스나우",    chg:+2.20,vol:"4M"},
+      {t:"NVDA",n:"엔비디아",      chg:+1.90,vol:"32M"}
+    ],
+    losers:[
+      {t:"COP",n:"코노코필립스",  chg:-2.80,vol:"12M"},
+      {t:"SLB",n:"슐럼버거",      chg:-2.50,vol:"9M"},
+      {t:"XOM",n:"엑슨모빌",      chg:-2.30,vol:"16M"},
+      {t:"CVX",n:"쉐브론",        chg:-2.10,vol:"13M"},
+      {t:"NEE",n:"넥스트에라",    chg:-1.20,vol:"8M"}
+    ],
+    fx:[
+      {name:"달러/원",  val:"1,428.90",chg:-0.22},
+      {name:"달러/엔",  val:"153.80",  chg:-0.26},
+      {name:"달러/위안",val:"6.80",    chg:-0.15}
+    ],
+    news:[
+      {src:"CNBC",  txt:"애플 1Q 실적 호조, 서비스 매출 사상 최대"},
+      {src:"CNBC",  txt:"이란-미국 협상 진전 보도, 유가 -2% 급락"},
+      {src:"CNBC",  txt:"나스닥 25,000 돌파 사상 최고치 기록"},
+      {src:"MW",    txt:"4월 고용보고서 양호, 연준 금리 인하 기대 소폭 후퇴"},
+      {src:"MW",    txt:"사이버보안 수요 강세, DDOG·CRWD 실적 기대감 선반영"}
+    ],
+    themes:[
+      {icon:"☁️",name:"클라우드·SaaS",  us:"DDOG +2.8% / NOW +2.2%",    kr:"더존비즈온 / 삼성SDS / NHN",         pct:+2.40,sig:"hot",  note:"DDOG·CRWD 실적 기대 선반영 → 국내 B2B 소프트웨어 모멘텀"},
+      {icon:"🔐",name:"사이버보안",     us:"CRWD +2.5% / PANW ▲",        kr:"안랩 / 이글루코퍼레이션 / 지니언스",  pct:+2.10,sig:"hot",  note:"사이버보안 수요 강세 지속 → 안랩·지니언스 주목"},
+      {icon:"🤖",name:"AI·데이터센터",  us:"NVDA +1.9% / AAPL +3.1%",   kr:"SK하이닉스 / 삼성전자 / 네이버",      pct:+1.60,sig:"hot",  note:"AI 수요 강세 재확인"},
+      {icon:"🔵",name:"반도체 메모리",  us:"NVDA +1.9% / MU ▲",         kr:"삼성전자 / SK하이닉스 / 한미반도체",  pct:+1.40,sig:"warm", note:"반도체 반등 지속"},
+      {icon:"🏗️",name:"반도체 파운드리",us:"QCOM ▲ / TSM ▲",            kr:"삼성전자 / DB하이텍",                 pct:+0.80,sig:"warm", note:"소폭 강세"},
+      {icon:"⚙️",name:"반도체 장비",    us:"AMAT ▲ / LRCX ▲",           kr:"한미반도체 / 원익IPS",                pct:+0.70,sig:"warm", note:"장비 사이클 회복"},
+      {icon:"💡",name:"광통신·네트워크",us:"ANET ▲ / CSCO ▲",            kr:"오이솔루션 / 우리로 / 에치에프알",    pct:+0.60,sig:"warm", note:"기술 강세 동반"},
+      {icon:"🎮",name:"게임·K-콘텐츠",  us:"NFLX ▲ / RBLX ▲",           kr:"크래프톤 / 넷마블 / 하이브",          pct:+0.60,sig:"warm", note:"콘텐츠 소비 개선"},
+      {icon:"💊",name:"바이오·헬스케어",us:"LLY ▲ / NVO ▲",              kr:"삼성바이오 / 셀트리온 / 한미약품",    pct:+0.30,sig:"warm", note:"헬스케어 소폭 강세"},
+      {icon:"🚗",name:"자동차·모빌리티",us:"TSLA ▲",                     kr:"현대차 / 기아 / 현대모비스",          pct:+0.40,sig:"warm", note:"소폭 강세"},
+      {icon:"🔋",name:"전기차·배터리",  us:"TSLA ▲",                     kr:"LG에너지솔루션 / 삼성SDI",            pct:+0.50,sig:"warm", note:"소폭 강세"},
+      {icon:"⛏️",name:"배터리 소재",    us:"ALB ▲",                      kr:"에코프로 / 포스코홀딩스",              pct:+0.40,sig:"warm", note:"중립~소폭 강세"},
+      {icon:"🏦",name:"금융·은행",      us:"XLF -0.1%",                  kr:"KB금융 / 신한지주 / 하나금융",        pct:-0.10,sig:"neutral",note:"중립"},
+      {icon:"🛡️",name:"방산·우주",      us:"LMT ▼ / RTX ▼",             kr:"한화에어로스페이스 / 현대로템",        pct:-0.20,sig:"neutral",note:"혼조"},
+      {icon:"🚢",name:"조선·해운",      us:"ZIM ▼ / DAC ▼",              kr:"HD현대중공업 / 삼성중공업 / HMM",     pct:-0.20,sig:"neutral",note:"중립"},
+      {icon:"🏗️",name:"철강·금속",      us:"NUE ▼ / FCX ▼",              kr:"포스코홀딩스 / 현대제철",              pct:-0.30,sig:"neutral",note:"중립"},
+      {icon:"🦾",name:"로봇·자동화",    us:"ROK ▼ / TER ▼",              kr:"레인보우로보틱스 / 현대로보틱스",      pct:-0.30,sig:"neutral",note:"중립"},
+      {icon:"💄",name:"소비재·K-뷰티",  us:"EL ▼",                      kr:"아모레퍼시픽 / LG생활건강",            pct:-0.20,sig:"neutral",note:"중립"},
+      {icon:"☀️",name:"신재생에너지",   us:"NEE -1.2% / ENPH ▼",        kr:"한화솔루션 / OCI",                    pct:-1.10,sig:"cold",  note:"이란 협상 → 유가 하락 → 재생에너지 경쟁력 약화"},
+      {icon:"⛽",name:"에너지·정유",    us:"XOM -2.3% / COP -2.8%",     kr:"S-Oil / SK이노베이션 / GS",          pct:-2.00,sig:"freeze",note:"이란 협상 진전 → 유가 -2% → 에너지주 단기 조정"}
+    ],
+    insight:"빅테크·사이버보안 중심 기술주 강세 지속. 국내 클라우드 관련주(더존비즈온·삼성SDS) 및 사이버보안(안랩·지니언스) 모멘텀 기대. 에너지주는 이란 협상 진전 시 추가 약세 가능 → S-Oil 단기 관망 권고."
+  },
+
+  /* ───────── 5/5 화 ───────── */
+  {
+    id:"d0505", label:"5/5 화", kor:"5/6 수 아침",
+    headline:"강세 — HBM 수요 폭발 확인", sub:"리스크온",
+    statusCls:"sig-hot",
+    indices:[
+      {name:"S&P 500",   val:"7,259.22", chg:+0.81},
+      {name:"나스닥",     val:"25,326.13",chg:+1.03},
+      {name:"다우존스",   val:"49,298.25",chg:+0.73},
+      {name:"러셀 2000", val:"2,795.40", chg:+1.24},
+      {name:"VIX 공포",  val:"18.10",    chg:-2.69}
+    ],
+    sectors:[
+      {name:"기술 XLK",        chg:+2.20},{name:"소재 XLB",         chg:+1.70},
+      {name:"소비재(임의) XLY",chg:+1.30},{name:"산업재 XLI",       chg:+0.90},
+      {name:"통신 XLC",        chg:+0.80},{name:"금융 XLF",         chg:+0.50},
+      {name:"헬스케어 XLV",    chg:+0.40},{name:"소비재(필수) XLP", chg:+0.30},
+      {name:"부동산 XLRE",     chg:+0.20},{name:"유틸리티 XLU",     chg:-0.30},
+      {name:"에너지 XLE",      chg:-0.50}
+    ],
+    gainers:[
+      {t:"PINS",n:"핀터레스트",  chg:+15.00,vol:"22M"},
+      {t:"MU",  n:"마이크론",    chg:+5.00, vol:"28M"},
+      {t:"AMD", n:"AMD",         chg:+3.80, vol:"46M"},
+      {t:"NVDA",n:"엔비디아",    chg:+2.90, vol:"34M"},
+      {t:"KLAC",n:"KLA",         chg:+2.40, vol:"5M"}
+    ],
+    losers:[
+      {t:"NEE",n:"넥스트에라",  chg:-1.10,vol:"9M"},
+      {t:"XOM",n:"엑슨모빌",    chg:-1.20,vol:"16M"},
+      {t:"CVX",n:"쉐브론",      chg:-0.90,vol:"13M"},
+      {t:"XLE",n:"에너지ETF",   chg:-0.50,vol:"10M"},
+      {t:"XLU",n:"유틸리티ETF", chg:-0.30,vol:"7M"}
+    ],
+    fx:[
+      {name:"달러/원",  val:"1,425.60",chg:-0.23},
+      {name:"달러/엔",  val:"153.20",  chg:-0.39},
+      {name:"달러/위안",val:"6.79",    chg:-0.15}
+    ],
+    news:[
+      {src:"CNBC",  txt:"마이크론, HBM 2026년 전량 매진 발표 → AI 수요 폭발 확인"},
+      {src:"CNBC",  txt:"AMD 1Q 실적 서프라이즈, 데이터센터 매출 급증"},
+      {src:"MW",    txt:"핀터레스트 2Q 가이던스 상회, 광고 수익 개선"},
+      {src:"Reuters",txt:"유가 하락 지속, 이란 협상 낙관론 확산"},
+      {src:"CNBC",  txt:"소재·광업주 강세, 구리·리튬 가격 반등"}
+    ],
+    themes:[
+      {icon:"🔵",name:"반도체 메모리·HBM",us:"MU +5.0% / AMD +3.8% / NVDA +2.9%",kr:"삼성전자 / SK하이닉스 / 한미반도체",pct:+3.90,sig:"hot",note:"HBM 2026 매진 → SK하이닉스·한미반도체 가장 직접적 수혜"},
+      {icon:"⚙️",name:"반도체 장비·소재",  us:"KLAC +2.4% / AMAT ▲",             kr:"한미반도체 / 원익IPS / 주성엔지니어링",pct:+2.50,sig:"hot",note:"장비 투자 사이클 재개 신호"},
+      {icon:"🤖",name:"AI·데이터센터",      us:"NVDA +2.9% / AMD +3.8%",           kr:"SK하이닉스 / 삼성전자 / 네이버",pct:+2.10,sig:"hot",note:"AI 수요 폭발 재확인"},
+      {icon:"🏗️",name:"철강·금속·소재",    us:"XLB +1.7% / NUE ▲ / FCX ▲",       kr:"포스코홀딩스 / 현대제철 / 고려아연",pct:+1.70,sig:"hot",note:"구리·리튬 가격 반등 → 포스코홀딩스 직접 수혜"},
+      {icon:"🏗️",name:"반도체 파운드리",   us:"QCOM ▲ / TSM ▲",                  kr:"삼성전자 / DB하이텍 / 삼성전기",pct:+1.40,sig:"warm",note:"파운드리 가동률 회복 기대"},
+      {icon:"☁️",name:"클라우드·SaaS",      us:"DDOG ▲ / NOW ▲ / SNOW ▲",         kr:"더존비즈온 / 삼성SDS / NHN",pct:+1.20,sig:"warm",note:"AI 수요 강세 연동"},
+      {icon:"🔐",name:"사이버보안",         us:"CRWD ▲ / FTNT ▲",                 kr:"안랩 / 이글루코퍼레이션 / 지니언스",pct:+0.90,sig:"warm",note:"강세 지속"},
+      {icon:"💡",name:"광통신·네트워크",    us:"ANET ▲ / CSCO ▲",                 kr:"오이솔루션 / 우리로 / 에치에프알",pct:+0.70,sig:"warm",note:"소폭 강세"},
+      {icon:"🏦",name:"금융·은행",          us:"XLF +0.5%",                        kr:"KB금융 / 신한지주 / 하나금융",pct:+0.50,sig:"warm",note:"금리 안정 효과"},
+      {icon:"🚗",name:"자동차·모빌리티",    us:"TSLA ▲ / GM ▲",                   kr:"현대차 / 기아 / 현대모비스",pct:+0.50,sig:"warm",note:"소비재 강세 연동"},
+      {icon:"🔋",name:"전기차·배터리",      us:"TSLA ▲",                           kr:"LG에너지솔루션 / 삼성SDI",pct:+0.60,sig:"warm",note:"소폭 강세"},
+      {icon:"⛏️",name:"배터리 소재·리튬",   us:"ALB ▲",                            kr:"에코프로 / 포스코홀딩스 / 엘앤에프",pct:+0.70,sig:"warm",note:"리튬 가격 반등"},
+      {icon:"💊",name:"바이오·헬스케어",    us:"LLY ▲ / NVO ▲",                   kr:"삼성바이오 / 셀트리온 / 한미약품",pct:+0.40,sig:"warm",note:"소폭 강세 유지"},
+      {icon:"🛡️",name:"방산·우주",          us:"LMT ▲ / RTX ▲",                   kr:"한화에어로스페이스 / 한국항공우주",pct:+0.40,sig:"warm",note:"산업재 강세 연동"},
+      {icon:"🎮",name:"게임·K-콘텐츠",      us:"NFLX ▲ / DIS ▲",                  kr:"크래프톤 / 넷마블 / 하이브",pct:+0.40,sig:"warm",note:"소폭 강세"},
+      {icon:"🚢",name:"조선·해운",          us:"DAC ▲ / MATX ▲",                  kr:"HD현대중공업 / 삼성중공업 / HMM",pct:+0.30,sig:"warm",note:"소폭 강세"},
+      {icon:"🦾",name:"로봇·자동화",        us:"ROK ▲",                            kr:"레인보우로보틱스 / 현대로보틱스",pct:+0.40,sig:"warm",note:"산업재 동반"},
+      {icon:"💄",name:"소비재·K-뷰티",     us:"EL ▲",                             kr:"아모레퍼시픽 / LG생활건강",pct:+0.20,sig:"neutral",note:"중립"},
+      {icon:"☀️",name:"신재생에너지",       us:"NEE -1.1% / ENPH ▼",              kr:"한화솔루션 / OCI / 씨에스윈드",pct:-0.70,sig:"cold",note:"유가 하락 → 재생에너지 경쟁력 약화 우려"},
+      {icon:"⛽",name:"에너지·정유",        us:"XOM -1.2% / XLE -0.5%",           kr:"S-Oil / SK이노베이션 / GS",pct:-0.70,sig:"cold",note:"이란 협상 낙관론 → 유가 지속 하락"}
+    ],
+    insight:"HBM 수요 급증 확인 → SK하이닉스·한미반도체 가장 직접적 수혜. 반도체 장비 사이클 재개 신호 → 원익IPS·주성엔지니어링 관심. 포스코홀딩스는 소재 강세 연동. 에너지·유틸리티는 지속 약세 구간."
+  },
+
+  /* ───────── 5/6 수 ───────── */
+  {
+    id:"d0506", label:"5/6 수", kor:"5/7 목 아침",
+    headline:"강세 — AI·반도체 초강세", sub:"리스크온",
+    statusCls:"sig-hot",
+    indices:[
+      {name:"S&P 500",   val:"7,365.12", chg:+1.46},
+      {name:"나스닥",     val:"25,838.94",chg:+2.02},
+      {name:"다우존스",   val:"49,910.59",chg:+1.24},
+      {name:"러셀 2000", val:"2,822.10", chg:+0.96},
+      {name:"VIX 공포",  val:"17.40",    chg:-3.87}
+    ],
+    sectors:[
+      {name:"기술 XLK",        chg:+2.70},{name:"산업재 XLI",      chg:+2.60},
+      {name:"소재 XLB",        chg:+1.90},{name:"통신 XLC",        chg:+1.50},
+      {name:"소비재(임의) XLY",chg:+1.40},{name:"금융 XLF",        chg:+0.90},
+      {name:"헬스케어 XLV",    chg:+0.50},{name:"소비재(필수) XLP",chg:+0.30},
+      {name:"부동산 XLRE",     chg:+0.20},{name:"유틸리티 XLU",    chg:-1.40},
+      {name:"에너지 XLE",      chg:-4.10}
+    ],
+    gainers:[
+      {t:"GLW", n:"코닝",          chg:+17.00,vol:"25M"},
+      {t:"AMD", n:"AMD",           chg:+16.00,vol:"62M"},
+      {t:"DIS", n:"디즈니",        chg:+8.00, vol:"18M"},
+      {t:"QCOM",n:"퀄컴",          chg:+7.45, vol:"14M"},
+      {t:"UBER",n:"우버",          chg:+6.00, vol:"22M"}
+    ],
+    losers:[
+      {t:"SLB",n:"슐럼버거",      chg:-5.10,vol:"12M"},
+      {t:"COP",n:"코노코필립스",  chg:-4.50,vol:"14M"},
+      {t:"XOM",n:"엑슨모빌",      chg:-3.20,vol:"18M"},
+      {t:"CVX",n:"쉐브론",        chg:-3.00,vol:"15M"},
+      {t:"NEE",n:"넥스트에라",    chg:-2.80,vol:"11M"}
+    ],
+    fx:[
+      {name:"달러/원",  val:"1,421.80",chg:-0.27},
+      {name:"달러/엔",  val:"152.60",  chg:-0.39},
+      {name:"달러/위안",val:"6.78",    chg:-0.15}
+    ],
+    news:[
+      {src:"CNBC",  txt:"코닝(GLW) +17%, 엔비디아와 AI 광통신 파트너십 체결"},
+      {src:"CNBC",  txt:"AMD 1Q 데이터센터 매출 +57% YoY, 대형 어닝서프라이즈"},
+      {src:"CNBC",  txt:"이란 평화협상 타결 임박 보도 → 유가 -5% 폭락"},
+      {src:"MW",    txt:"디즈니 2Q 어닝서프라이즈, 스트리밍 흑자 전환"},
+      {src:"MW",    txt:"퀄컴 AI 칩 라이선스 매출 확대, 실적 호조"}
+    ],
+    themes:[
+      {icon:"🤖",name:"AI·데이터센터",    us:"AMD +16% / NVDA ▲ / MSFT ▲",      kr:"SK하이닉스 / 삼성전자 / 네이버",        pct:+4.20,sig:"hot",  note:"AMD 데이터센터 +57% YoY → AI 수요 폭발 재확인"},
+      {icon:"🏗️",name:"반도체 파운드리", us:"QCOM +7.45% / TSM ▲",              kr:"삼성전자 / DB하이텍 / 삼성전기",        pct:+3.80,sig:"hot",  note:"파운드리 가동률 회복, QCOM AI 칩 수요 급증"},
+      {icon:"☁️",name:"클라우드·SaaS",    us:"NOW ▲ / SNOW ▲ / CRM ▲",          kr:"더존비즈온 / 삼성SDS / NHN",           pct:+3.10,sig:"hot",  note:"AI 인프라 투자 확대 → SaaS 수혜"},
+      {icon:"🔵",name:"반도체 메모리·HBM",us:"NVDA ▲ / AMD +16% / MU ▲",        kr:"삼성전자 / SK하이닉스 / 한미반도체",    pct:+3.20,sig:"hot",  note:"AI 수요 강세로 HBM 수혜 지속"},
+      {icon:"⚙️",name:"반도체 장비·소재", us:"KLAC ▲ / AMAT ▲",                 kr:"한미반도체 / 원익IPS / 주성엔지니어링", pct:+2.00,sig:"hot",  note:"장비 투자 사이클 본격화"},
+      {icon:"💡",name:"광통신·네트워크",  us:"GLW +17% / ANET ▲",               kr:"오이솔루션 / 우리로 / 에치에프알",      pct:+1.40,sig:"warm", note:"코닝-엔비디아 파트너십 → 국내 광통신 부품주 동반 급등 패턴"},
+      {icon:"🎮",name:"게임·K-콘텐츠",    us:"DIS +8.0% / NFLX ▲",             kr:"크래프톤 / 넷마블 / 하이브 / SM",      pct:+1.20,sig:"warm", note:"디즈니 서프라이즈 + 스트리밍 강세 → K-콘텐츠 모멘텀"},
+      {icon:"🏦",name:"금융·은행",        us:"XLF +0.9%",                        kr:"KB금융 / 신한지주 / 하나금융",          pct:+0.90,sig:"warm", note:"금리 안정 + 실적 시즌 호조"},
+      {icon:"🏭",name:"산업재",           us:"XLI +2.6%",                        kr:"한화에어로스페이스 / HD현대",            pct:+2.60,sig:"hot",  note:"산업재 전반 강세"},
+      {icon:"🦾",name:"로봇·자동화",      us:"ROK ▲",                            kr:"레인보우로보틱스 / 현대로보틱스",        pct:+1.00,sig:"warm", note:"산업재 동반 강세"},
+      {icon:"🚗",name:"자동차·모빌리티",  us:"TSLA ▲ / GM ▲",                   kr:"현대차 / 기아 / 현대모비스",            pct:+0.80,sig:"warm", note:"소비재 강세 연동"},
+      {icon:"🔋",name:"전기차·배터리",    us:"TSLA ▲",                           kr:"LG에너지솔루션 / 삼성SDI",              pct:+0.60,sig:"warm", note:"소폭 강세"},
+      {icon:"⛏️",name:"배터리 소재",      us:"ALB ▲",                            kr:"에코프로 / 포스코홀딩스",               pct:+0.50,sig:"warm", note:"소폭 강세"},
+      {icon:"💊",name:"바이오·헬스케어",  us:"LLY ▲ / JNJ ▲",                  kr:"삼성바이오 / 셀트리온 / 한미약품",      pct:+0.50,sig:"warm", note:"소폭 강세"},
+      {icon:"🛡️",name:"방산·우주",        us:"LMT ▲ / RTX ▲",                  kr:"한화에어로스페이스 / 한국항공우주",      pct:+0.60,sig:"warm", note:"산업재 강세 연동"},
+      {icon:"🚢",name:"조선·해운",        us:"DAC ▲",                            kr:"HD현대중공업 / 삼성중공업 / HMM",       pct:+0.30,sig:"warm", note:"소폭 강세"},
+      {icon:"🏗️",name:"철강·금속",        us:"NUE ▲ / STLD ▲",                  kr:"포스코홀딩스 / 현대제철",               pct:+0.80,sig:"warm", note:"소재 강세 유지"},
+      {icon:"💄",name:"소비재·K-뷰티",   us:"EL ▲ / ULTA ▲",                   kr:"아모레퍼시픽 / LG생활건강",             pct:+0.40,sig:"warm", note:"소비재 강세 연동"},
+      {icon:"⚡",name:"수소·원자력",      us:"CCJ -2% / CEG -3.6%",             kr:"두산에너빌리티 / 한전기술",             pct:-2.10,sig:"freeze",note:"이란 협상 → 에너지 전환 수요 둔화 우려"},
+      {icon:"⛽",name:"에너지·정유",      us:"XOM -3.2% / COP -4.5%",           kr:"S-Oil / SK이노베이션 / GS",            pct:-3.80,sig:"freeze",note:"이란 협상 타결 임박 → 유가 -5% 폭락 → 에너지주 투매"}
+    ],
+    insight:"이란 협상 타결 기대가 최대 드라이버. AI·반도체 초강세 지속 → SK하이닉스·삼성전자 갭업 가능. 광통신주(오이솔루션·에치에프알) 코닝 효과 연동 주목. 에너지·정유주는 이란 협상 시 추가 하락 위험 매우 높음."
+  },
+
+  /* ───────── 5/7 목 ───────── */
+  {
+    id:"d0507", label:"5/7 목", kor:"5/8 금 아침",
+    headline:"소폭 약세", sub:"관망 우위",
+    statusCls:"sig-cold",
+    indices:[
+      {name:"S&P 500",   val:"7,337.11", chg:-0.38},
+      {name:"나스닥",     val:"25,806.20",chg:-0.13},
+      {name:"다우존스",   val:"49,596.97",chg:-0.63},
+      {name:"러셀 2000", val:"2,839.63", chg:-1.63},
+      {name:"VIX 공포",  val:"17.08",    chg:-1.78}
+    ],
+    sectors:[
+      {name:"통신 XLC",        chg:+0.03},{name:"소비재(임의) XLY",chg:+0.01},
+      {name:"기술 XLK",        chg:-0.20},{name:"소비재(필수) XLP",chg:-0.31},
+      {name:"헬스케어 XLV",    chg:-0.47},{name:"금융 XLF",        chg:-0.56},
+      {name:"부동산 XLRE",     chg:-0.76},{name:"유틸리티 XLU",    chg:-1.29},
+      {name:"산업재 XLI",      chg:-1.62},{name:"에너지 XLE",      chg:-1.84},
+      {name:"소재 XLB",        chg:-1.93}
+    ],
+    gainers:[
+      {t:"DDOG",n:"데이터독",         chg:+31.33,vol:"26M"},
+      {t:"FTNT",n:"포티넷",           chg:+20.03,vol:"18M"},
+      {t:"ZS",  n:"지스케일러",       chg:+10.06,vol:"3M"},
+      {t:"SNOW",n:"스노우플레이크",   chg:+10.00,vol:"14M"},
+      {t:"CRWD",n:"크라우드스트라이크",chg:+8.04, vol:"5M"}
+    ],
+    losers:[
+      {t:"ARM", n:"ARM홀딩스",       chg:-10.11,vol:"22M"},
+      {t:"TER", n:"테라다인",         chg:-7.42, vol:"5M"},
+      {t:"COHR",n:"코히어런트",       chg:-7.39, vol:"12M"},
+      {t:"CIEN",n:"시에나",           chg:-6.59, vol:"3M"},
+      {t:"ZIM", n:"짐인티그레이션",   chg:-6.29, vol:"2M"}
+    ],
+    fx:[
+      {name:"달러/원",  val:"1,463.37",chg:+1.31},
+      {name:"달러/엔",  val:"156.90",  chg:+0.25},
+      {name:"달러/위안",val:"6.80",    chg:-0.10}
+    ],
+    news:[
+      {src:"CNBC",txt:"U.S. and Iran trade fire in Strait of Hormuz — 호르무즈 해협 미-이란 교전, 유가 변동성 확대"},
+      {src:"CNBC",txt:"Iran focus at Trump-Xi summit may delay progress on tariffs, rare earths — 관세·희토류 협상 지연 우려"},
+      {src:"CNBC",txt:"Here's what to expect from Friday's release of the April jobs report — 4월 고용보고서 주목"},
+      {src:"MW",  txt:"Oil futures rise after U.S., Iran trade fire — 에너지 섹터 변동성 주의"},
+      {src:"MW",  txt:"Cloudflare to cut 20% of staff in a big bet on AI — AI 구조조정 본격화"}
+    ],
+    themes:[
+      {icon:"☁️",name:"클라우드·SaaS",    us:"DDOG +31.33% / SNOW +10.0% / NOW ▲ / CRM ▲",kr:"더존비즈온 / 삼성SDS / NHN",         pct:+12.32,sig:"hot",  note:"DDOG·SNOW 어닝서프라이즈 → 국내 B2B 소프트웨어·클라우드주 모멘텀"},
+      {icon:"🔐",name:"사이버보안",       us:"FTNT +20.03% / ZS +10.06% / CRWD +8.04% / PANW +7.0%",kr:"안랩 / 이글루코퍼레이션 / 지니언스",pct:+11.28,sig:"hot",  note:"사이버 공격 이슈 + 미국 보안주 강세 → 국내 보안주 수혜"},
+      {icon:"🎮",name:"게임·K-콘텐츠",    us:"RBLX +2.33% / DIS +0.56% / EA +0.03%",kr:"크래프톤 / 넷마블 / 하이브 / SM엔터",   pct:+0.72, sig:"warm", note:"콘텐츠 소비 강세 → K-콘텐츠·게임 모멘텀"},
+      {icon:"🤖",name:"AI·데이터센터",    us:"NVDA +1.77% / MSFT ▲",               kr:"SK하이닉스 / 삼성전자 / 네이버",          pct:+0.49, sig:"neutral",note:"NVDA 소폭 강세, 전반 혼조"},
+      {icon:"⛏️",name:"배터리 소재·리튬", us:"ALB ▼ / LTHM ▼",                     kr:"에코프로 / 포스코홀딩스 / 엘앤에프",       pct:+0.49, sig:"neutral",note:"혼조"},
+      {icon:"🔋",name:"전기차·배터리",    us:"TSLA ▼ / GM ▼",                       kr:"LG에너지솔루션 / 삼성SDI / SK이노",        pct:+0.23, sig:"neutral",note:"혼조"},
+      {icon:"🚗",name:"자동차·모빌리티",  us:"현대·기아 ▼",                          kr:"현대차 / 기아 / 현대모비스",               pct:+0.19, sig:"neutral",note:"혼조"},
+      {icon:"🛡️",name:"방산·우주·드론",  us:"LMT ▼ / RTX ▼",                      kr:"한화에어로스페이스 / 한국항공우주 / 현대로템",pct:-0.38,sig:"neutral",note:"혼조"},
+      {icon:"💊",name:"바이오·헬스케어",  us:"NVO +0.09% / MRNA -0.51% / JNJ -0.94% / ABBV -1.13%",kr:"삼성바이오 / 셀트리온 / 한미약품",pct:-0.74,sig:"cold",  note:"LLY·NVO 강세 → 한미약품 GLP-1 파이프라인 재조명"},
+      {icon:"☀️",name:"신재생에너지",     us:"ENPH -0.92% / FSLR -1.57% / NEE -2.17%",kr:"한화솔루션 / OCI / 씨에스윈드 / 효성중공업",pct:-1.55,sig:"cold",  note:"미국 IRA 정책 불확실성 지속"},
+      {icon:"💄",name:"소비재·K-뷰티",   us:"EL -1.59% / ULTA -1.60%",              kr:"아모레퍼시픽 / LG생활건강 / 코스맥스",     pct:-1.60,sig:"freeze",note:"글로벌 뷰티 소비 회복 지연"},
+      {icon:"🏦",name:"금융·은행",        us:"GS -1.22% / BAC -1.59% / MS -1.64% / JPM -2.74%",kr:"KB금융 / 신한지주 / 하나금융 / 미래에셋",pct:-1.80,sig:"freeze",note:"미국 은행 전반 약세"},
+      {icon:"🔵",name:"반도체 메모리·HBM",us:"NVDA +1.77% / MU -2.99% / INTC -3.0% / AMD -3.07%",kr:"삼성전자 / SK하이닉스 / 한미반도체",pct:-1.82,sig:"freeze",note:"NVDA·MU 동반 강세 시 SK하이닉스 HBM 수혜 부각"},
+      {icon:"🏗️",name:"반도체 파운드리",  us:"QCOM +5.18% / TSM -1.28% / AVGO -3.03% / ARM -10.11%",kr:"삼성전자 / DB하이텍 / 삼성전기",pct:-2.31,sig:"freeze",note:"ARM 급락(-10%) 파운드리·설계 전반 약세"},
+      {icon:"🚢",name:"조선·해운",        us:"DAC +1.14% / MATX -1.95% / ZIM -6.29%",kr:"HD현대중공업 / 삼성중공업 / 한화오션 / HMM",pct:-2.37,sig:"freeze",note:"해운 운임 약세, ZIM 급락"},
+      {icon:"🏗️",name:"철강·금속",        us:"FCX -0.46% / NUE -3.21% / STLD -3.69%",kr:"포스코홀딩스 / 현대제철 / 고려아연",     pct:-2.45,sig:"freeze",note:"미국 인프라 투자 우려"},
+      {icon:"⛽",name:"에너지·정유",       us:"XOM -1.42% / CVX -1.44% / COP -3.38% / SLB -3.92%",kr:"S-Oil / SK이노베이션 / GS",    pct:-2.54,sig:"freeze",note:"WTI 유가 상승에도 에너지주 하락, 이란 교전 변동성"},
+      {icon:"⚡",name:"수소·원자력",       us:"BWXT -2.47% / CEG -3.56% / CCJ -4.08%",kr:"두산에너빌리티 / 한전기술 / 비에이치아이",pct:-3.37,sig:"freeze",note:"SMR 정책 불확실성"},
+      {icon:"⚙️",name:"반도체 장비·소재", us:"KLAC -2.92% / LRCX -3.58% / AMAT -4.19%",kr:"한미반도체 / 원익IPS / 주성엔지니어링",pct:-3.56,sig:"freeze",note:"AMAT·LRCX 강세가 장비 투자 재개 신호였으나 오늘은 역전"},
+      {icon:"💡",name:"광통신·네트워크",  us:"CSCO +0.57% / ANET -3.61% / LITE -5.48% / CIEN -6.59%",kr:"오이솔루션 / 우리로 / 이노와이어리스 / 에치에프알",pct:-4.50,sig:"freeze",note:"CIEN·LITE 급락, 국내 광통신 부품주 주의"},
+      {icon:"🦾",name:"로봇·자동화",      us:"ROK -2.35% / TER -7.42%",             kr:"레인보우로보틱스 / 현대로보틱스 / 에스피지",pct:-4.88,sig:"freeze",note:"TER 급락, 로봇 자동화주 전반 주의"}
+    ],
+    insight:"호르무즈 교전으로 지정학 리스크 재부각, 원화 급약세(-1.31%). 사이버보안·클라우드 실적 서프라이즈 → 국내 안랩·지니언스 단기 모멘텀. ARM 급락(-10%)으로 파운드리·설계 전반 주의. 달러/원 1,463원 → 수출주(현대차·삼성전자) 환이익, 수입 비용 증가 업종 부정적."
+  }
+];
+
+// ═══════════════════════════════════════════════════════
+// 렌더링 로직
+// ═══════════════════════════════════════════════════════
+const arrow = v => v >= 0 ? "▲" : "▼";
+const cls   = v => v >= 0 ? "up" : "dn";
+const sigLabel = s => ({hot:"강세",warm:"소폭 강세",neutral:"혼조",cold:"소폭 약세",freeze:"약세"}[s]||s);
+
+function buildSectors(sectors) {
+  const sorted = [...sectors].sort((a,b)=>b.chg-a.chg);
+  const mx = Math.max(...sectors.map(s=>Math.abs(s.chg)));
+  return sorted.map(s=>`
+    <div class="sec-row">
+      <span class="sec-name">${s.name}</span>
+      <div class="bar-wrap">
+        <div class="bar ${s.chg>=0?'bar-up':'bar-dn'}" style="width:${Math.round(Math.abs(s.chg)/mx*52)+3}px"></div>
+        <span class="sec-pct ${cls(s.chg)}">${s.chg>=0?'+':''}${s.chg.toFixed(2)}%</span>
+      </div>
+    </div>`).join('');
+}
+
+function buildMovers(list, up) {
+  return list.map(m=>`
+    <div class="mover-row">
+      <div>
+        <div class="mover-t">${m.t}</div>
+        <div class="mover-n">${m.n}</div>
+        ${m.vol?`<div class="mover-vol">거래량 ${m.vol}</div>`:''}
+      </div>
+      <span class="badge ${up?'badge-up':'badge-dn'}">${up?'+':''}${m.chg.toFixed(2)}%</span>
+    </div>`).join('');
+}
+
+function buildThemes(themes) {
+  const bull = themes.filter(t=>t.sig==='hot'||t.sig==='warm');
+  const mix  = themes.filter(t=>t.sig==='neutral');
+  const bear = themes.filter(t=>t.sig==='cold'||t.sig==='freeze');
+
+  const row = t=>`
+    <div class="theme-row">
+      <div class="theme-left">
+        <div><span class="theme-icon">${t.icon}</span><span class="theme-name">${t.name}</span></div>
+        <div class="theme-us">${t.us}</div>
+        <div class="theme-kr">한국 주목: ${t.kr}</div>
+        <div class="theme-kr" style="color:#888;margin-top:2px">→ ${t.note}</div>
+      </div>
+      <div class="theme-right">
+        <div class="theme-pct ${cls(t.pct)}">${t.pct>=0?'+':''}${t.pct.toFixed(2)}%</div>
+        <span class="sig sig-${t.sig}">${sigLabel(t.sig)}</span>
+      </div>
+    </div>`;
+
+  let html='';
+  if(bull.length){
+    html+=`<div class="theme-section">
+      <div class="theme-section-title ts-bull">▲ 강세 테마 — 매수 관심 (${bull.length}개)</div>
+      <div class="card" style="padding:4px 16px 8px">${bull.map(row).join('')}</div>
+    </div>`;
+  }
+  if(mix.length){
+    html+=`<div class="theme-section">
+      <div class="theme-section-title ts-mix">→ 혼조 테마 — 중립 관망 (${mix.length}개)</div>
+      <div class="card" style="padding:4px 16px 8px">${mix.map(row).join('')}</div>
+    </div>`;
+  }
+  if(bear.length){
+    html+=`<div class="theme-section">
+      <div class="theme-section-title ts-bear">▼ 약세 테마 — 주의·관망 (${bear.length}개)</div>
+      <div class="card" style="padding:4px 16px 8px">${bear.map(row).join('')}</div>
+    </div>`;
+  }
+  return html;
+}
+
+function renderDay(d) {
+  const statusBg = {
+    'sig-hot':'#e6f4ec','sig-warm':'#eef8e8','sig-neutral':'#f2f2ee',
+    'sig-cold':'#fff8ec','sig-freeze':'#fceaea'
+  }[d.statusCls]||'#f2f2ee';
+  const statusColor = {
+    'sig-hot':'#1a7a3c','sig-warm':'#3a6d10','sig-neutral':'#888',
+    'sig-cold':'#7a4a00','sig-freeze':'#b02020'
+  }[d.statusCls]||'#888';
+
+  return `
+    <div class="title-card">
+      <div class="left">
+        <h2>📊 미국 시장 마감 브리핑</h2>
+        <div class="meta">${d.label} (미국 동부 16:00 마감) · 한국 ${d.kor} 개장 예측</div>
+      </div>
+      <div>
+        <div class="status-pill" style="background:${statusBg};color:${statusColor}">${d.headline}</div>
+        <div class="status-sub">${d.sub}</div>
+      </div>
+    </div>
+
+    <div class="idx-grid">
+      ${d.indices.map(i=>`
+        <div class="idx-card">
+          <div class="idx-name">${i.name}</div>
+          <div class="idx-val">${i.val}</div>
+          <div class="idx-chg ${cls(i.chg)}">${arrow(i.chg)} ${Math.abs(i.chg).toFixed(2)}%</div>
+        </div>`).join('')}
+    </div>
+
+    <div class="row2">
+      <div class="card">
+        <div class="card-title">섹터 흐름</div>
+        ${buildSectors(d.sectors)}
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:10px">
+          <div class="card-title">환율</div>
+          ${d.fx.map(f=>`
+            <div class="fx-row">
+              <span class="fx-name">${f.name}</span>
+              <span class="fx-val">${f.val}</span>
+              <span class="fx-chg ${cls(f.chg)}">${arrow(f.chg)} ${Math.abs(f.chg).toFixed(2)}%</span>
+            </div>`).join('')}
+        </div>
+        <div class="card">
+          <div class="card-title">급등/급락 TOP3</div>
+          ${d.gainers.slice(0,3).map(m=>`
+            <div class="mover-row">
+              <div><div class="mover-t">${m.t} <span style="font-weight:400;font-size:11px;color:#aaa">${m.n}</span></div></div>
+              <span class="badge badge-up">+${m.chg.toFixed(1)}%</span>
+            </div>`).join('')}
+          ${d.losers.slice(0,3).map(m=>`
+            <div class="mover-row">
+              <div><div class="mover-t">${m.t} <span style="font-weight:400;font-size:11px;color:#aaa">${m.n}</span></div></div>
+              <span class="badge badge-dn">${m.chg.toFixed(1)}%</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">주요 뉴스</div>
+      ${d.news.map(n=>`
+        <div class="news-row">
+          <span class="news-src">${n.src}</span>
+          <span class="news-txt">${n.txt}</span>
+        </div>`).join('')}
+    </div>
+
+    <div style="margin-bottom:12px">
+      <div style="font-size:12px;font-weight:500;color:#555;margin-bottom:8px;padding:0 2px">
+        한국 시장 주목 테마 — 미국장 연동 분석 (${d.themes.length}개 테마)
+      </div>
+      ${buildThemes(d.themes)}
+    </div>
+
+    <div class="insight">
+      <div class="insight-label">오늘 한국장 핵심 포인트</div>
+      ${d.insight}
+    </div>
+  `;
+}
+
+// 탭 + 패널 생성
+const tabBar = document.getElementById('tabBar');
+const panels = document.getElementById('panels');
+const last = DAYS.length - 1;
+
+DAYS.forEach((d, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn' + (i===last?' active':'');
+  btn.innerHTML = `${d.label}<span>${d.kor}</span>`;
+  btn.onclick = () => {
+    tabBar.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    panels.querySelectorAll('.day-panel').forEach(p=>p.classList.remove('visible'));
+    document.getElementById('p'+d.id).classList.add('visible');
+    window.scrollTo(0,0);
+  };
+  tabBar.appendChild(btn);
+
+  const panel = document.createElement('div');
+  panel.className = 'day-panel' + (i===last?' visible':'');
+  panel.id = 'p'+d.id;
+  panel.innerHTML = renderDay(d);
+  panels.appendChild(panel);
+});
+
+document.getElementById('updatedAt').textContent = '업데이트: ' + UPDATED;
+</script>
+</body>
+</html>
