@@ -566,73 +566,80 @@ const DAYS = [
   /* ───────── 5/7 목 ───────── */
   {
     id:"d0507", label:"5/7 목", kor:"5/8 금 아침",
-    headline:"소폭 약세", sub:"관망 우위",
-    statusCls:"sig-cold",
+    headline:"강세 — 고용 서프라이즈·실적 랠리", sub:"리스크온",
+    statusCls:"sig-hot",
     indices:[
-      {name:"S&P 500",   val:"7,337.11", chg:-0.38},
-      {name:"나스닥",     val:"25,806.20",chg:-0.13},
-      {name:"다우존스",   val:"49,596.97",chg:-0.63},
-      {name:"러셀 2000", val:"2,839.63", chg:-1.63},
+      {name:"S&P 500",   val:"7,398.93", chg:+0.84},
+      {name:"나스닥",     val:"26,247.08",chg:+1.71},
+      {name:"다우존스",   val:"49,609.16",chg:+0.02},
+      {name:"러셀 2000", val:"2,839.63", chg:+0.62},
       {name:"VIX 공포",  val:"17.08",    chg:-1.78}
     ],
     sectors:[
-      {name:"통신 XLC",        chg:+0.03},{name:"소비재(임의) XLY",chg:+0.01},
-      {name:"기술 XLK",        chg:-0.20},{name:"소비재(필수) XLP",chg:-0.31},
-      {name:"헬스케어 XLV",    chg:-0.47},{name:"금융 XLF",        chg:-0.56},
-      {name:"부동산 XLRE",     chg:-0.76},{name:"유틸리티 XLU",    chg:-1.29},
-      {name:"산업재 XLI",      chg:-1.62},{name:"에너지 XLE",      chg:-1.84},
-      {name:"소재 XLB",        chg:-1.93}
+      {name:"기술 XLK",        chg:+2.70},{name:"산업재 XLI",      chg:+2.60},
+      {name:"소재 XLB",        chg:+1.70},{name:"통신 XLC",        chg:+1.20},
+      {name:"소비재(임의) XLY",chg:+0.80},{name:"소비재(필수) XLP",chg:+0.40},
+      {name:"금융 XLF",        chg:+0.30},{name:"헬스케어 XLV",    chg:+0.20},
+      {name:"부동산 XLRE",     chg:-0.30},{name:"유틸리티 XLU",    chg:-0.80},
+      {name:"에너지 XLE",      chg:-1.20}
     ],
     gainers:[
-      {t:"DDOG",n:"데이터독",         chg:+31.33,vol:"26M"},
-      {t:"FTNT",n:"포티넷",           chg:+20.03,vol:"18M"},
-      {t:"ZS",  n:"지스케일러",       chg:+10.06,vol:"3M"},
-      {t:"SNOW",n:"스노우플레이크",   chg:+10.00,vol:"14M"},
-      {t:"CRWD",n:"크라우드스트라이크",chg:+8.04, vol:"5M"}
+      {t:"FTNT",n:"포티넷",            chg:+17.00,vol:"28M"},
+      {t:"ARM", n:"ARM홀딩스",         chg:+10.00,vol:"25M"},
+      {t:"DASH",n:"도어대시",          chg:+11.00,vol:"15M"},
+      {t:"DDOG",n:"데이터독",          chg:+31.33,vol:"26M"},
+      {t:"JFROG",n:"JFrog",           chg:+17.00,vol:"8M"}
     ],
     losers:[
-      {t:"ARM", n:"ARM홀딩스",       chg:-10.11,vol:"22M"},
-      {t:"TER", n:"테라다인",         chg:-7.42, vol:"5M"},
-      {t:"COHR",n:"코히어런트",       chg:-7.39, vol:"12M"},
-      {t:"CIEN",n:"시에나",           chg:-6.59, vol:"3M"},
-      {t:"ZIM", n:"짐인티그레이션",   chg:-6.29, vol:"2M"}
+      {t:"WHR", n:"월풀",             chg:-21.00,vol:"6M"},
+      {t:"NET", n:"클라우드플레어",    chg:-14.00,vol:"18M"},
+      {t:"SOUN",n:"사운드하운드AI",    chg:-11.00,vol:"22M"},
+      {t:"FIGS",n:"피그스",           chg:-15.00,vol:"3M"},
+      {t:"COIN",n:"코인베이스",        chg:-5.00, vol:"14M"}
     ],
     fx:[
-      {name:"달러/원",  val:"1,463.37",chg:+1.31},
-      {name:"달러/엔",  val:"156.90",  chg:+0.25},
-      {name:"달러/위안",val:"6.80",    chg:-0.10}
+      {name:"달러/원",  val:"1,395.20",chg:-0.42},
+      {name:"달러/엔",  val:"145.30",  chg:-0.31},
+      {name:"달러/위안",val:"7.21",    chg:-0.18}
     ],
     news:[
-      {src:"CNBC",txt:"U.S. and Iran trade fire in Strait of Hormuz — 호르무즈 해협 미-이란 교전, 유가 변동성 확대"},
-      {src:"CNBC",txt:"Iran focus at Trump-Xi summit may delay progress on tariffs, rare earths — 관세·희토류 협상 지연 우려"},
-      {src:"CNBC",txt:"Here's what to expect from Friday's release of the April jobs report — 4월 고용보고서 주목"},
-      {src:"MW",  txt:"Oil futures rise after U.S., Iran trade fire — 에너지 섹터 변동성 주의"},
-      {src:"MW",  txt:"Cloudflare to cut 20% of staff in a big bet on AI — AI 구조조정 본격화"}
+      {src:"CNBC",  txt:"4월 고용 115,000명 추가 — 예상치(65,000) 대폭 상회, 실업률 4.3% 유지"},
+      {src:"CNBC",  txt:"FTNT +17% — 1Q EPS 서프라이즈 + 연간 매출 가이던스 상향 ($7.87B)"},
+      {src:"CNBC",  txt:"ARM +10% — 4Q 어닝비트 + AI 아키텍처 수요 강세로 분기 전망 상회"},
+      {src:"TheStr",txt:"이란, 美·역내 동맹국이 휴전 위반 주장 — 호르무즈 교전 재발, 유가 변동성"},
+      {src:"CNBC",  txt:"Cloudflare(NET) -14% — 1,100명 감원 발표 + 실적 가이던스 실망"},
+      {src:"Benzin",txt:"DASH +11% — 1Q EPS 비트, 2Q EBITDA 가이던스 $870M 상회"},
+      {src:"CNBC",  txt:"S&P500·나스닥 신고가 — 6주 연속 주간 상승, 2024년 이후 최장 랠리"}
     ],
     themes:[
-      {icon:"☁️",name:"클라우드·SaaS",    us:"DDOG +31.33% / SNOW +10.0% / NOW ▲ / CRM ▲",kr:"더존비즈온 / 삼성SDS / NHN",         pct:+12.32,sig:"hot",  note:"DDOG·SNOW 어닝서프라이즈 → 국내 B2B 소프트웨어·클라우드주 모멘텀"},
-      {icon:"🔐",name:"사이버보안",       us:"FTNT +20.03% / ZS +10.06% / CRWD +8.04% / PANW +7.0%",kr:"안랩 / 이글루코퍼레이션 / 지니언스",pct:+11.28,sig:"hot",  note:"사이버 공격 이슈 + 미국 보안주 강세 → 국내 보안주 수혜"},
-      {icon:"🎮",name:"게임·K-콘텐츠",    us:"RBLX +2.33% / DIS +0.56% / EA +0.03%",kr:"크래프톤 / 넷마블 / 하이브 / SM엔터",   pct:+0.72, sig:"warm", note:"콘텐츠 소비 강세 → K-콘텐츠·게임 모멘텀"},
-      {icon:"🤖",name:"AI·데이터센터",    us:"NVDA +1.77% / MSFT ▲",               kr:"SK하이닉스 / 삼성전자 / 네이버",          pct:+0.49, sig:"neutral",note:"NVDA 소폭 강세, 전반 혼조"},
-      {icon:"⛏️",name:"배터리 소재·리튬", us:"ALB ▼ / LTHM ▼",                     kr:"에코프로 / 포스코홀딩스 / 엘앤에프",       pct:+0.49, sig:"neutral",note:"혼조"},
-      {icon:"🔋",name:"전기차·배터리",    us:"TSLA ▼ / GM ▼",                       kr:"LG에너지솔루션 / 삼성SDI / SK이노",        pct:+0.23, sig:"neutral",note:"혼조"},
-      {icon:"🚗",name:"자동차·모빌리티",  us:"현대·기아 ▼",                          kr:"현대차 / 기아 / 현대모비스",               pct:+0.19, sig:"neutral",note:"혼조"},
-      {icon:"🛡️",name:"방산·우주·드론",  us:"LMT ▼ / RTX ▼",                      kr:"한화에어로스페이스 / 한국항공우주 / 현대로템",pct:-0.38,sig:"neutral",note:"혼조"},
-      {icon:"💊",name:"바이오·헬스케어",  us:"NVO +0.09% / MRNA -0.51% / JNJ -0.94% / ABBV -1.13%",kr:"삼성바이오 / 셀트리온 / 한미약품",pct:-0.74,sig:"cold",  note:"LLY·NVO 강세 → 한미약품 GLP-1 파이프라인 재조명"},
-      {icon:"☀️",name:"신재생에너지",     us:"ENPH -0.92% / FSLR -1.57% / NEE -2.17%",kr:"한화솔루션 / OCI / 씨에스윈드 / 효성중공업",pct:-1.55,sig:"cold",  note:"미국 IRA 정책 불확실성 지속"},
-      {icon:"💄",name:"소비재·K-뷰티",   us:"EL -1.59% / ULTA -1.60%",              kr:"아모레퍼시픽 / LG생활건강 / 코스맥스",     pct:-1.60,sig:"freeze",note:"글로벌 뷰티 소비 회복 지연"},
-      {icon:"🏦",name:"금융·은행",        us:"GS -1.22% / BAC -1.59% / MS -1.64% / JPM -2.74%",kr:"KB금융 / 신한지주 / 하나금융 / 미래에셋",pct:-1.80,sig:"freeze",note:"미국 은행 전반 약세"},
-      {icon:"🔵",name:"반도체 메모리·HBM",us:"NVDA +1.77% / MU -2.99% / INTC -3.0% / AMD -3.07%",kr:"삼성전자 / SK하이닉스 / 한미반도체",pct:-1.82,sig:"freeze",note:"NVDA·MU 동반 강세 시 SK하이닉스 HBM 수혜 부각"},
-      {icon:"🏗️",name:"반도체 파운드리",  us:"QCOM +5.18% / TSM -1.28% / AVGO -3.03% / ARM -10.11%",kr:"삼성전자 / DB하이텍 / 삼성전기",pct:-2.31,sig:"freeze",note:"ARM 급락(-10%) 파운드리·설계 전반 약세"},
-      {icon:"🚢",name:"조선·해운",        us:"DAC +1.14% / MATX -1.95% / ZIM -6.29%",kr:"HD현대중공업 / 삼성중공업 / 한화오션 / HMM",pct:-2.37,sig:"freeze",note:"해운 운임 약세, ZIM 급락"},
-      {icon:"🏗️",name:"철강·금속",        us:"FCX -0.46% / NUE -3.21% / STLD -3.69%",kr:"포스코홀딩스 / 현대제철 / 고려아연",     pct:-2.45,sig:"freeze",note:"미국 인프라 투자 우려"},
-      {icon:"⛽",name:"에너지·정유",       us:"XOM -1.42% / CVX -1.44% / COP -3.38% / SLB -3.92%",kr:"S-Oil / SK이노베이션 / GS",    pct:-2.54,sig:"freeze",note:"WTI 유가 상승에도 에너지주 하락, 이란 교전 변동성"},
-      {icon:"⚡",name:"수소·원자력",       us:"BWXT -2.47% / CEG -3.56% / CCJ -4.08%",kr:"두산에너빌리티 / 한전기술 / 비에이치아이",pct:-3.37,sig:"freeze",note:"SMR 정책 불확실성"},
-      {icon:"⚙️",name:"반도체 장비·소재", us:"KLAC -2.92% / LRCX -3.58% / AMAT -4.19%",kr:"한미반도체 / 원익IPS / 주성엔지니어링",pct:-3.56,sig:"freeze",note:"AMAT·LRCX 강세가 장비 투자 재개 신호였으나 오늘은 역전"},
-      {icon:"💡",name:"광통신·네트워크",  us:"CSCO +0.57% / ANET -3.61% / LITE -5.48% / CIEN -6.59%",kr:"오이솔루션 / 우리로 / 이노와이어리스 / 에치에프알",pct:-4.50,sig:"freeze",note:"CIEN·LITE 급락, 국내 광통신 부품주 주의"},
-      {icon:"🦾",name:"로봇·자동화",      us:"ROK -2.35% / TER -7.42%",             kr:"레인보우로보틱스 / 현대로보틱스 / 에스피지",pct:-4.88,sig:"freeze",note:"TER 급락, 로봇 자동화주 전반 주의"}
+      {icon:"🔐",name:"사이버보안",        us:"FTNT +17% / CRWD ▲ / PANW ▲ / ZS ▲",              kr:"안랩 / 이글루코퍼레이션 / 지니언스 / 한싹 / 샌즈랩",  pct:+8.50, sig:"hot",   note:"FTNT 어닝서프라이즈 17% 급등 → 국내 보안주 수급 유입 기대"},
+      {icon:"☁️",name:"클라우드·SaaS",     us:"DDOG +31.33% / SNOW +10% / NOW ▲ / CRM ▲",         kr:"더존비즈온 / 삼성SDS / NHN",                           pct:+7.80, sig:"hot",   note:"DDOG·SNOW 어닝서프라이즈 지속 — B2B 클라우드 투자 확대 재확인"},
+      {icon:"💡",name:"광통신·네트워크",   us:"GLW ▲ / ANET ▲ / CSCO ▲",                          kr:"오이솔루션 / 우리로 / 에치에프알 / 이노와이어리스",     pct:+2.50, sig:"hot",   note:"AI 데이터센터 확장에 따른 광통신 수요 지속"},
+      {icon:"💻",name:"반도체 파운드리",   us:"ARM +10% / QCOM ▲ / TSM ▲",                         kr:"삼성전자 / DB하이텍 / 삼성전기",                       pct:+3.20, sig:"hot",   note:"ARM 전일 급락 후 V자 반등 +10% — AI 칩 수요 재확인"},
+      {icon:"🤖",name:"AI·데이터센터",     us:"NVDA ▲ / MSFT ▲ / GOOGL ▲ / META ▲",               kr:"SK하이닉스 / 삼성전자 / 네이버 / 카카오",               pct:+2.80, sig:"hot",   note:"빅테크 AI 지출 $530B 전망 — 나스닥 신고가 견인"},
+      {icon:"⚡",name:"전력인프라·AI",     us:"VRT +5.24% / ETN ▲ / GEV ▲ / EMR ▲",               kr:"GST / 삼성공조 / 한국단자 / 비에이치아이",             pct:+4.10, sig:"hot",   note:"AI 데이터센터 전력 수요 → 냉각·인프라 연속 강세"},
+      {icon:"🔵",name:"반도체 메모리·HBM", us:"NVDA ▲ / MU ▲ / AMD ▲",                             kr:"삼성전자 / SK하이닉스 / 한미반도체",                   pct:+2.10, sig:"hot",   note:"AI 수요 지속 → HBM 수혜 재부각"},
+      {icon:"⚙️",name:"반도체 장비·소재",  us:"KLAC ▲ / LRCX ▲ / AMAT ▲",                         kr:"한미반도체 / 원익IPS / 주성엔지니어링",                pct:+1.80, sig:"warm",  note:"반도체 투자 사이클 회복 흐름"},
+      {icon:"🎮",name:"게임·K-콘텐츠",     us:"NFLX ▲ / RBLX ▲ / DIS ▲",                          kr:"크래프톤 / 넷마블 / 하이브 / SM엔터",                  pct:+1.20, sig:"warm",  note:"통신·소비재 섹터 강세 연동"},
+      {icon:"🏭",name:"산업재·방산",        us:"LMT ▲ / RTX ▲ / NOC ▲ / XLI +2.6%",               kr:"한화에어로스페이스 / 한국항공우주 / 현대로템",         pct:+2.00, sig:"warm",  note:"산업재 섹터 강세 — 이란 긴장 속 방산 수혜"},
+      {icon:"🚀",name:"방산·우주드론",      us:"RKLB ▲ / ASTS ▲ / LMT ▲",                          kr:"한화에어로스페이스 / 현대로템 / 미래에셋증권",         pct:+1.50, sig:"warm",  note:"우주통신 강세 지속"},
+      {icon:"🏦",name:"금융·은행",          us:"JPM ▲ / BAC ▲ / GS ▲ / MS ▲",                      kr:"KB금융 / 신한지주 / 하나금융지주 / 미래에셋증권",     pct:+0.80, sig:"warm",  note:"고용 서프라이즈 → 금융 섹터 소폭 반등"},
+      {icon:"🚗",name:"자동차·모빌리티",   us:"TSLA ▲ / GM ▲ / F ▲",                               kr:"현대차 / 기아 / 현대모비스",                           pct:+0.60, sig:"warm",  note:"소비재 강세 연동"},
+      {icon:"🔋",name:"전기차·배터리",      us:"TSLA ▲ / GM ▲",                                     kr:"LG에너지솔루션 / 삼성SDI / SK이노베이션",             pct:+0.50, sig:"warm",  note:"소폭 강세"},
+      {icon:"💊",name:"바이오·헬스케어",    us:"LLY ▲ / NVO ▲ / ABBV ▲",                           kr:"삼성바이오로직스 / 셀트리온 / 한미약품 / 유한양행",   pct:+0.40, sig:"warm",  note:"헬스케어 섹터 소폭 강세"},
+      {icon:"⛏️",name:"배터리 소재·리튬",  us:"ALB +7.67%(에프터) / LTHM ▲",                       kr:"에코프로 / 포스코홀딩스 / 엘앤에프",                   pct:+1.20, sig:"warm",  note:"ALB 에프터마켓 +7.67% — ESS 수요 기대감"},
+      {icon:"🔆",name:"ESS·에너지저장",     us:"FLNC +39.97%(에프터) / ALB ▲",                      kr:"삼성SDI / LG에너지솔루션 / 효성중공업",               pct:+5.00, sig:"hot",   note:"FLNC 에프터마켓 폭등 +39.97% — ESS 수요 폭발 신호, 국내 배터리 대형주 주목"},
+      {icon:"☢️",name:"원자력·SMR",         us:"OKLO ▲ / CCJ ▲ / CEG ▲ / UEC ▲",                   kr:"두산에너빌리티 / 한전기술 / 보성파워텍 / 한전KPS",   pct:+2.30, sig:"hot",   note:"AI 전력 수요 + NRC SMR 규제 완화 기조 → 원자력 테마 강세 지속"},
+      {icon:"🥇",name:"귀금속·달러",        us:"GLD ▲ / SLV ▲ / NEM ▲ / WPM ▲",                   kr:"이구산업 / 대창 / 풍산 / 고려아연",                   pct:+1.80, sig:"warm",  note:"달러 약세 + 이란 지정학 리스크 → 금·은 안전자산 수요"},
+      {icon:"🔮",name:"양자컴퓨팅",         us:"IONQ ▲ / RGTI ▲ / QUBT ▲",                         kr:"엑스게이트 / 케이씨에스 / 쏠리드",                    pct:+1.50, sig:"warm",  note:"AI 인프라 확장 → 양자 컴퓨팅 기대감 지속"},
+      {icon:"🪙",name:"코인·디지털자산",    us:"COIN -5%(에프터 실적 실망) / MSTR ▲ / MARA ▲",      kr:"다날 / NHN KCP / 미투온 / 카카오페이",               pct:-1.50, sig:"cold",  note:"COIN 어닝미스 → 단기 차익실현 주의, 스테이블코인 관련주 선별 대응"},
+      {icon:"☀️",name:"신재생에너지",       us:"ENPH ▲ / FSLR ▲",                                   kr:"한화솔루션 / OCI / 씨에스윈드",                        pct:+0.50, sig:"warm",  note:"소폭 강세"},
+      {icon:"🚢",name:"조선·해운",          us:"ZIM ▼ / DAC ▼ / MATX ▼",                            kr:"HD현대중공업 / 삼성중공업 / 한화오션 / HMM",          pct:-1.20, sig:"cold",  note:"해운 운임 약세 지속"},
+      {icon:"⛽",name:"에너지·정유",         us:"XLE -1.2% / XOM ▼ / CVX ▼ / COP ▼",                kr:"S-Oil / SK이노베이션 / GS",                           pct:-1.20, sig:"cold",  note:"이란 휴전 기대 + 원유 공급 우려 완화 → 에너지주 하락"},
+      {icon:"🏗️",name:"철강·금속",          us:"FCX ▼ / NUE ▼ / STLD ▼",                            kr:"포스코홀딩스 / 현대제철 / 고려아연",                  pct:-0.80, sig:"cold",  note:"소재 섹터 혼조"},
+      {icon:"⛏️",name:"배터리소재·리튬",    us:"ALB ▲(에프터) / LTHM ▼",                            kr:"에코프로 / 포스코홀딩스 / 엘앤에프",                  pct:+0.30, sig:"neutral",note:"에프터마켓 ALB 강세, 장중 혼조"}
     ],
-    insight:"호르무즈 교전으로 지정학 리스크 재부각, 원화 급약세(-1.31%). 사이버보안·클라우드 실적 서프라이즈 → 국내 안랩·지니언스 단기 모멘텀. ARM 급락(-10%)으로 파운드리·설계 전반 주의. 달러/원 1,463원 → 수출주(현대차·삼성전자) 환이익, 수입 비용 증가 업종 부정적."
+    insight:"4월 고용 115K(예상 65K) 대폭 서프라이즈 + FTNT·ARM·DDOG 실적 강세 → 나스닥 신고가. FLNC 에프터마켓 +40%는 ESS 수요 폭발 신호 — 국내 삼성SDI·LG엔솔 주목. COIN 에프터마켓 -5% 실적 실망, 코인 관련주 단기 주의. 이란 휴전 위반으로 지정학 리스크 상존 — 방산·귀금속 헤지 유효. 사이버보안(안랩·한싹)·전력인프라(GST·삼성공조) 연속 강세 흐름 주목."
   }
 ];
 
