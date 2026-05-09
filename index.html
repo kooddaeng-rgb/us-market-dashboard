@@ -787,16 +787,16 @@ function renderDay(d) {
         </div>`).join('')}
     </div>
 
+    <div class="insight">
+      <div class="insight-label">오늘 한국장 핵심 포인트</div>
+      ${d.insight.split(/(?<=\.) /).map(s=>`<div style="margin-bottom:5px">• ${s.trim()}</div>`).join('')}
+    </div>
+
     <div style="margin-bottom:12px">
       <div style="font-size:12px;font-weight:500;color:#555;margin-bottom:8px;padding:0 2px">
         한국 시장 주목 테마 — 미국장 연동 분석 (${d.themes.length}개 테마)
       </div>
       ${buildThemes(d.themes)}
-    </div>
-
-    <div class="insight">
-      <div class="insight-label">오늘 한국장 핵심 포인트</div>
-      ${d.insight}
     </div>
   `;
 }
