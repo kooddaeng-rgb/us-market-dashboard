@@ -3,7 +3,7 @@ name: 미국 시장 일일 브리핑 자동 업데이트
 on:
   schedule:
     # 매일 한국 시간 07:00 = UTC 22:00 (전날)
-    - cron: '0 22 * * 0-4'   # 일~목 UTC 22:00 (월~금 KST 07:00)
+    - cron: '0 22 * * *'     # 매일 UTC 22:00 = KST 07:00 (토·일 포함)
   workflow_dispatch:           # 수동 실행 버튼
 
 jobs:

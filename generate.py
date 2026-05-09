@@ -10,16 +10,20 @@ urllib3.disable_warnings()
 KST = timezone(timedelta(hours=9))
 now = datetime.now(KST)
 
-# 월요일이면 금요일 데이터, 아니면 전날
-weekday = now.weekday()  # 0=월 6=일
+# 직전 미국 거래일 계산
+# 월요일 → 금요일(3일 전)
+# 토요일 → 금요일(1일 전) : 금요일 미장 반영
+# 일요일 → 금요일(2일 전) : 주말 이슈 업데이트용 (데이터는 금요일)
+# 화~금  → 전날
+weekday = now.weekday()  # 0=월 1=화 ... 5=토 6=일
 if weekday == 0:
-    target = now - timedelta(days=3)
-elif weekday == 6:
-    target = now - timedelta(days=2)
+    target = now - timedelta(days=3)   # 월 → 금
 elif weekday == 5:
-    target = now - timedelta(days=1)
+    target = now - timedelta(days=1)   # 토 → 금 (미장 마감 반영)
+elif weekday == 6:
+    target = now - timedelta(days=2)   # 일 → 금 (주말 이슈 재업데이트)
 else:
-    target = now - timedelta(days=1)
+    target = now - timedelta(days=1)   # 화~금 → 전날
 
 DAY_KOR = ["월","화","수","목","금","토","일"]
 label   = f"{target.month}/{target.day} {DAY_KOR[target.weekday()]}"
