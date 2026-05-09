@@ -6,6 +6,9 @@ on:
     - cron: '0 22 * * *'     # 매일 UTC 22:00 = KST 07:00 (토·일 포함)
   workflow_dispatch:           # 수동 실행 버튼
 
+permissions:
+  contents: write
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -13,6 +16,8 @@ jobs:
     steps:
       - name: 레포 체크아웃
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Python 설치
         uses: actions/setup-python@v5
@@ -25,19 +30,10 @@ jobs:
       - name: 데이터 수집 및 HTML 생성
         run: python generate.py
 
-      - name: GitHub Pages 배포
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          publish_branch: main
-          keep_files: true
-          commit_message: "daily update: ${{ env.TODAY }}"
-
-      - name: 변경사항 커밋
+      - name: 변경사항 커밋 및 푸시
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --staged --quiet || git commit -m "daily update $(date +'%Y-%m-%d' -d '+9 hours')"
-          git push
+          git diff --staged --quiet || git commit -m "daily update $(TZ='Asia/Seoul' date +'%Y-%m-%d %H:%M KST')"
+          git push origin HEAD:main
